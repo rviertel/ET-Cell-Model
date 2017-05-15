@@ -8,7 +8,7 @@ data = ET(input,sampling_rate);
 
 input: input vector, if no input then just a vector of zeros
 
-sampling_rate: rate at which the input vector should be sampled. 1000 for milisecond (default)
+sampling_rate: rate at which the input vector should be sampled. 1000 for milisecond
 
 returns the following struct:
 
@@ -28,7 +28,7 @@ data.events - list of spike events
 data.which - event type
 * 1 - spike
 * 2 - burst start
- *3 - burst end
+* 3 - burst end
 
 data.current - system currents
 * data.current(:,1) = transient sodium
@@ -45,6 +45,6 @@ data.current - system currents
 ### create the input vector
 input = zeros(1,5000);
 ### run the model
-data = ET(input,1000); (or simply "data = ET(input);")
+data = ET(input,1000);
 ### plot the voltage trace
-plot(data.T,data.X(:,1)
+plot(data.T,data.X(:,1))
