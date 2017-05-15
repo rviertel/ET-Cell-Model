@@ -1,8 +1,8 @@
-#Model of the Mamalian ET cell
+# Model of the Mamalian ET cell
 
 Author: Ryan Viertel
 
-##Usage:
+## Usage:
 
 data = ET(input,sampling_rate);
 
@@ -39,7 +39,7 @@ data.current - system currents
 	data.current(:,7) = HVA calcium
 	data.current(:,8) = large conductance potassium
 
-##example
+## example
 
 ### create the input vector
 input = zeros(1,5000);
