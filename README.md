@@ -25,6 +25,7 @@ data.X - ODE variables at each time step
 * data.X(:,9) - nNew
 
 data.events - list of spike events
+
 data.which - event type
 * 1 - spike
 * 2 - burst start
