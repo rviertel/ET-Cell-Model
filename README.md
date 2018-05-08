@@ -50,8 +50,8 @@ data = ET(input,1000);
 ### plot the voltage trace
 plot(data.T,data.X(:,1))
 
-##ME-PCM
+## ME-PCM
 The code used to sample the model throughout parameter space to determine stability and investigate the effect of model parameters on model output is found in the ME-PCM directory
 
-##xpp
+## xpp
 The ODE files for the burst initiation and termination and found in the xpp directory
