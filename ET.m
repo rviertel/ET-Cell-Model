@@ -2,10 +2,11 @@ function data = ET(ORNtrace, ORNsamplingrate)
 
     %% set up params
 	PARS = parameters;
+  % PARS.gNaP = gPerSodium;
 
-    ics = [-51.7045    0.0531    0.0604    0.1720    0.0460    0.2084    0.0005    0.1292 0]';
+    ics = [-51.408534874838772   0.055706295559466   0.139259083672574   0.157733123889777   0.048620921041047   0.216830183163897 0.118223401083348   0.000398391792190   0.049382804823416]; % just after end of burst at equilibrium state
 
-    odeopts = odeset('Events',@spikedetect);
+    odeopts = odeset('Events',@spikedetect,'MaxStep',2);
 
     data = integrator(@vfield_ET, odeopts, ics, PARS, ORNtrace, ORNsamplingrate);
 end
@@ -15,7 +16,7 @@ function xdot = vfield_ET(t,x,p)
 %
 %   INPUTS:
 %   t -- current time
-%   x -- (6,1) vector of current vector values
+%   x -- (9,1) vector of current vector values
 %   p -- struct containing parameter values in p.ET.param_name format
 %
 %   OUTPUT:
@@ -31,8 +32,7 @@ mLVA = x(5);
 hLVA = x(6);
 wBK = x(7);
 Ca = x(8);
-nNew = x(9);
-
+nHVK = x(9);
 
 % auxiliary quantities for the BK current
 theta_wBK = -32 + 59.2*exp(-90*Ca) + 96.7*exp(-470*Ca);
@@ -52,12 +52,11 @@ mLVA_inf = 1/(1+exp((V - p.theta_mLVA)/p.sigma_mLVA));
 hLVA_inf = 1/(1+exp((V - p.theta_hLVA)/p.sigma_hLVA));
 mHVA_inf = 1/(1+exp((V - p.theta_mHVA)/p.sigma_mHVA));
 wBK_inf = 1/(1+exp((V - theta_wBK)/p.sigma_wBK));
-mNew_inf = 1./(1+exp((V - p.theta_mNew)/p.sigma_mNew));
-nNew_inf = 1./(1+exp((V - p.theta_nNew)/p.sigma_nNew));
+mHVK_inf = 1./(1+exp((V - p.theta_mHVK)/p.sigma_mHVK));
+nHVK_inf = 1./(1+exp((V - p.theta_nHVK)/p.sigma_nHVK));
 
 % time constants
-nNew_tau = 1000./(1.0+exp(-(V+35))) + 1000;
-nNew_tau = 1000./(1.0+exp(-(V+35))) + 1000;
+nHVK_tau = 1000./(1.0+exp(-(V+35))) + 1000;
 nK_tau = p.tau_nK./cosh((V-p.theta_nK)/(2.0*p.sigma_nK));
 hNaP_tau = p.tau_hNaP./cosh((V-p.theta_hNaP)/(2.0*p.sigma_hNaP));
 hH_tau = p.tau_hH_T*exp(p.delta_hH_T*(V-p.theta_hH_T)/p.sigma_hH_T)/(1+exp((V-p.theta_hH_T)/p.sigma_hH_T));
@@ -67,7 +66,7 @@ wBK_tau = -(p_wBK - 1.0)*(f - 0.2)/0.8 + p.wBK_base;
 
 % compute values for the currents
 INa = p.gNa.*(1-nK)*mNa_inf.^3*(V - p.vNa);
-INew = p.gNew*mNew_inf*nNew*(V - p.vK);
+IHVK = p.gHVK*mHVK_inf*nHVK*(V - p.vK);
 IK = p.gK.*nK.^4.*(V - p.vK);
 IL = p.gL.*(V - p.vL);
 IH = p.gH.*hH.*(V - p.vH);
@@ -81,7 +80,7 @@ Input = p.intrace(floor(t / p.ORNsamplingfactor)+1);
 
 
 xdot = zeros(size(x));
-xdot(1) = -(INa + IK + ILVA + IH + INaP + IL + IHVA + IBK + INew - Input)./p.C;
+xdot(1) = -(INa + IK + ILVA + IH + INaP + IL + IHVA + IBK + IHVK - Input)./p.C;
 xdot(2) = (nK_inf-nK)/nK_tau;
 xdot(3) = (hNaP_inf-hNaP)/hNaP_tau;
 xdot(4) = (hH_inf-hH)./hH_tau;
@@ -89,8 +88,7 @@ xdot(5) = (mLVA_inf-mLVA)/mLVA_tau;
 xdot(6) = (hLVA_inf-hLVA)/hLVA_tau;
 xdot(7) = (wBK_inf - wBK)/wBK_tau;
 xdot(8) = -p.Ca_buffer*10*(ILVA + IHVA)/(p.Ca_z*p.F*p.d) + (p.Ca0 - Ca)/p.tau_Ca;
-xdot(9) = (nNew_inf - nNew)./nNew_tau;
-
+xdot(9) = (nHVK_inf - nHVK)./nHVK_tau;
 end
 
 function data = integrator(odefun, odeopts, ics, PARS, ORNtrace, ORNsamplingrate)
@@ -144,6 +142,7 @@ function data = integrator(odefun, odeopts, ics, PARS, ORNtrace, ORNsamplingrate
     % 6 = LVA calcium
     % 7 = HVA calcium
     % 8 = large conductance potassium
+    % 9 = HVK current
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     current(:,1) = PARS.gNa.*(1-xout(:,2)).*(1./(1+exp((xout(:,1)-PARS.theta_mNa)./PARS.sigma_mNa))).^3.*(xout(:,1)-PARS.vNa);
     current(:,2) = PARS.gK.*xout(:,2).^4.*(xout(:,1)-PARS.vK);
@@ -154,16 +153,13 @@ function data = integrator(odefun, odeopts, ics, PARS, ORNtrace, ORNsamplingrate
     current(:,7) = PARS.gHVA.*1./(1+exp(-(xout(:,1) + 20)./9)).*(xout(:,1)-PARS.vCa);
     current(:,8) = PARS.gBK.*xout(:,7).*(xout(:,1)-PARS.vK);
 
-    wBK_p = 2.9 + 6.3.*exp(-360.*xout(:,8));
-    wBK_s = -25.3 + 107.5.*exp(-120.*xout(:,8));
-    wBK_f = 1./(10.*(exp(-(xout(:,1) + 100 - wBK_s)./63.6)+exp(-150-(xout(:,1) + 100 - wBK_s))./63.6)) - 5.2;
-    current(:,9) = -(wBK_p - 1).*(wBK_f - 0.2)./0.8 + PARS.wBK_base;
+    mHVK_inf = 1./(1+exp((xout(:,1) - PARS.theta_mHVK)/PARS.sigma_mHVK));
+    current(:,9) = PARS.gHVK.*mHVK_inf.*xout(:,9).*(xout(:,1)-PARS.vK);
 
     data = struct('T', tout, 'X', xout, 'events', teout, 'which', ieout, 'current', current);
     toc
 
 end
-
 
 function [value,isterminal,direction] = spikedetect(~,y,~)
     value(1) = y(1); % spikes

@@ -12,21 +12,21 @@ pars.vCa = 120;
 % gNa = 29.17;
 % gK = 12.96;
 % gH = 20;
-% gLVA = 11.0213;
+% gLVA = 15.0213;
 % gNaP = 8.3244;
 % gHVA = 2;
 % gBK = 5;
-% gNew = 5;
+% gNew = 8;
 
 pars.gL = 2.5;
 pars.gNa = 29.17;
 pars.gK = 12.96;
 pars.gH = 20;
 pars.gLVA = 15.0213;
-pars.gNaP = 8.3244;
-pars.gHVA = 2.0;
+pars.gNaP = 8.3244; % 5.6 - 120 changes burst frequency
+pars.gHVA = 2;
 pars.gBK = 5;
-pars.gNew = 10;
+pars.gNew = 8;
 
 %% Na
 pars.theta_mNa = -25;
