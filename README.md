@@ -55,3 +55,4 @@ The code used to sample the model throughout parameter space to determine stabil
 
 ## xpp
 The ODE files for the burst initiation and termination and found in the xpp directory
+
