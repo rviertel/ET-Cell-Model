@@ -1,4 +1,6 @@
-# Model of the Mamalian ET cell
+# Model of the Mammalian ET cell
+
+Computational model and files to recreate the results from the paper "A Computational Model of the Mammalian External Tufted Cell" https://doi.org/10.1016/j.jtbi.2018.10.003 
 
 Author: Ryan Viertel
 
@@ -55,5 +57,4 @@ plot(data.T,data.X(:,1))
 The code used to sample the model throughout parameter space to determine stability and investigate the effect of model parameters on model output is found in the ME-PCM directory
 
 ## xpp
-The ODE files for the burst initiation and termination and found in the xpp directory
-
+The ODE file to recreate the bifurcation diagram is found in the xpp directory 
