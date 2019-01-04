@@ -38,7 +38,7 @@ int vfield (double t, const double y[], double dy[], void *params)
   double hH = y[3];
   double mLVA = y[4];
   double hLVA = y[5];
-  double wBK = y[6];
+  double mBK = y[6];
   double Ca = y[7];
   double nHVK = y[8];
 
@@ -51,7 +51,7 @@ int vfield (double t, const double y[], double dy[], void *params)
 
 
   // auxiliary quantities for BK channel
-  double theta_wBK = -32.0 + 59.2*exp(-90.0*Ca) + 96.7*exp(-470.0*Ca);
+  double theta_mBK = -20.0 + 59.2*exp(-90.0*Ca) + 96.7*exp(-470.0*Ca);
   double p = 2.9 + 6.3*exp(-360*Ca);
   double s = -25.3 + 107.5*exp(-120.0*Ca);
   double f = 1.0/(10.0*(exp(-(V+100.0-s)/63.6)+exp((-150.0+(V+100.0-s))/63.6))) - 5.2;
@@ -66,7 +66,7 @@ int vfield (double t, const double y[], double dy[], void *params)
   double mLVA_inf = 1.0/(1.0+exp((V-theta_mLVA)/sigma_mLVA));
   double hLVA_inf = 1.0/(1.0+exp((V-theta_hLVA)/sigma_hLVA));
   double mHVA_inf = 1.0/(1.0+exp((V-theta_mHVA)/sigma_mHVA));
-  double wBK_inf = 1.0/(1.0+exp((V-theta_wBK)/sigma_wBK));
+  double mBK_inf = 1.0/(1.0+exp((V-theta_mBK)/sigma_mBK));
   double mHVK_inf = 1.0/(1.0+exp((V-theta_mHVK)/sigma_mHVK));
   double nHVK_inf = 1.0/(1.0+exp((V-theta_nHVK)/sigma_nHVK));
 
@@ -78,7 +78,7 @@ int vfield (double t, const double y[], double dy[], void *params)
                             / (1+exp((V-theta_hH_T)/sigma_hH_T));
   double mLVA_tau = tau_mLVA/cosh((V-theta_mLVA)/(2.0*sigma_mLVA));
   double hLVA_tau = tau_hLVA/cosh((V-theta_hLVA)/(2.0*sigma_hLVA));
-  double wBK_tau = -(p - 1.0)*(f - 0.2)/0.8 + wBK_base;
+  double mBK_tau = -(p - 1.0)*(f - 0.2)/0.8 + mBK_base;
 
 
   // compute values for the currents
@@ -90,7 +90,7 @@ int vfield (double t, const double y[], double dy[], void *params)
   double INaP = gNaP*mNaP_inf*hNaP*(V-vNa);
   double ILVA = gLVA*mLVA*mLVA*hLVA*(V-vCa);
   double IHVA = gHVA*mHVA_inf*(V-vCa);
-  double IBK = gBK*wBK*(V-vK);
+  double IBK = gBK*mBK*(V-vK);
 
 
   dy[0] = -(INa + IK + ILVA + IH + INaP + IL + IHVA + IBK + IHVK)/C;
@@ -99,7 +99,7 @@ int vfield (double t, const double y[], double dy[], void *params)
   dy[3] = (hH_inf-hH)/hH_tau;
   dy[4] = (mLVA_inf-mLVA)/mLVA_tau;
   dy[5] = (hLVA_inf-hLVA)/hLVA_tau;
-  dy[6] = (wBK_inf - wBK)/wBK_tau;
+  dy[6] = (mBK_inf - mBK)/mBK_tau;
   dy[7] = -Ca_buffer*10.0*(ILVA + IHVA)/(Ca_z*F*d) + (Ca0 - Ca)/tau_Ca;
   dy[8] = (nHVK_inf - nHVK)/nHVK_tau;
 
@@ -141,14 +141,14 @@ void uq_ET(double* parameters,int num_pars, FILE* fp) {
       double hH = y[3];
       double mLVA = y[4];
       double hLVA = y[5];
-      double wBK = y[6];
+      double mBK = y[6];
       double Ca = y[7];
       double nHVK = y[8];
       double tau = 1000/(1.0+exp(-(V+35))) + 200;
 
       // output to file. 17 significant digits for full double precision
       fprintf (fp," %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e %.17e\n",
-                  t, V, nK, hNaP, hH, mLVA, hLVA, wBK, Ca, nHVK, tau);
+                  t, V, nK, hNaP, hH, mLVA, hLVA, mBK, Ca, nHVK, tau);
 
 
     }

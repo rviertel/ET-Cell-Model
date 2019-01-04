@@ -3,22 +3,22 @@
 
 // Reversal potentials (mV)
 #define vL -62.5
+#define vH -35.0
 #define vNa 45.0
 #define vK -105.0
-#define vH -35.0
 #define vCa 120.0
 
 // Conductances (mS/cm^2)
 // commented out conductances are provided by a parameter determined by the location on the grid in parameter space
 #define gL 2.5
+// #define gH 20.0
+// #define gNaP 8.3244
+// #define gLVA 15.0213
 #define gNa 29.17
 #define gK 12.96
-// #define gH 20.0
-// #define gLVA 15.0213
-// #define gNaP 8.3244
 #define gHVA 2.0
 // #define gBK 5.0
-#define gHVK 8.0
+#define gHVK 10.0
 
 // Na
 #define theta_mNa -25.0

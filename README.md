@@ -20,9 +20,9 @@ data.X - ODE variables at each time step
 * data.X(:,4) - hH
 * data.X(:,5) - mLVA
 * data.X(:,6) - hLVA
-* data.X(:,7) - wBK
+* data.X(:,7) - mBK
 * data.X(:,8) - Calcium
-* data.X(:,9) - nNew
+* data.X(:,9) - nHVK
 
 data.events - list of spike events
 
@@ -40,6 +40,7 @@ data.current - system currents
 * data.current(:,6) = LVA calcium
 * data.current(:,7) = HVA calcium
 * data.current(:,8) = large conductance potassium
+* data.current(:,9) = HVK current
 
 ## example
 
